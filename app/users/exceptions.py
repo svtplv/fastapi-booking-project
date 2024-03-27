@@ -37,3 +37,8 @@ class IncorrectTokenFormatException(MyBookingException):
 class TokenInvalidDataException(MyBookingException):
     status_code = status.HTTP_401_UNAUTHORIZED
     detail = 'Переданные данные некорректны.'
+
+
+class RoomNotAvailableException(MyBookingException):
+    status_code = status.HTTP_409_CONFLICT
+    detail = 'Не осталось свободных номеров.'
