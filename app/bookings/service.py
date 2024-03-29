@@ -4,6 +4,7 @@ from sqlalchemy import and_, func, insert, or_, select
 
 from app.database import async_session_maker
 from app.bookings.models import Bookings
+from app.exceptions import NegativeTimeDeltaException
 from app.hotels.models import Rooms
 from app.service.base import BaseService
 
@@ -20,6 +21,8 @@ class BookingService(BaseService):
         date_to: date
     ):
         async with async_session_maker() as session:
+            if date_from > date_to:
+                raise NegativeTimeDeltaException
             booked_rooms = select(Bookings).where(
                 and_(
                     Bookings.room_id == 1,
@@ -43,6 +46,7 @@ class BookingService(BaseService):
                 Rooms.quantity, booked_rooms.c.room_id
             )
             rooms_left = await session.execute(get_rooms_left)
+            print(rooms_left)
             rooms_left: int = rooms_left.scalar()
             if rooms_left > 0:
                 get_price = select(Rooms.price).filter_by(id=room_id)

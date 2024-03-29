@@ -2,7 +2,7 @@ from fastapi import Depends, Request
 from jose import ExpiredSignatureError, JWTError, jwt
 
 from app.config import settings
-from app.users.exceptions import (IncorrectTokenFormatException,
+from app.exceptions import (IncorrectTokenFormatException,
                                   TokenAbsentException, TokenExpiredException,
                                   TokenInvalidDataException)
 from app.users.service import UsersService

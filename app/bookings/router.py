@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends
 from app.bookings.schemas import SBooking
 from app.bookings.service import BookingService
 from app.users.dependencies import get_current_user
-from app.users.exceptions import RoomNotAvailableException
+from app.exceptions import RoomNotAvailableException
 from app.users.models import Users
 
 
@@ -21,6 +21,11 @@ async def get_bookings(
     return await BookingService.get_all(user_id=user.id)
 
 
+@router.get('/{id}')
+async def get_booking(id: int):
+    return await BookingService.get_by_id(id)
+
+
 @router.post('')
 async def add_booking(
     room_id: int, date_from: date, date_to: date,
@@ -30,8 +35,14 @@ async def add_booking(
 
     if not booking:
         raise RoomNotAvailableException
+    return booking
 
 
-@router.get('/{id}')
-async def get_booking(id: int):
-    return await BookingService.get_by_id(id)
+@router.delete('/{booking_id}')
+async def delete_booking(
+    booking_id: int, user: Users = Depends(get_current_user)
+):
+    result = await BookingService.delete(
+        id=booking_id, user_id=user.id
+    )
+    return result

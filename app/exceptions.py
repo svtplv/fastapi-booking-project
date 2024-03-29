@@ -42,3 +42,13 @@ class TokenInvalidDataException(MyBookingException):
 class RoomNotAvailableException(MyBookingException):
     status_code = status.HTTP_409_CONFLICT
     detail = 'Не осталось свободных номеров.'
+
+
+class NotFoundException(MyBookingException):
+    status_code = status.HTTP_404_NOT_FOUND
+    detail = 'Объект не найден.'
+
+
+class NegativeTimeDeltaException(MyBookingException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    detail = 'Дата въезда не может быть позже даты выезда.'

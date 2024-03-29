@@ -1,6 +1,7 @@
 from sqlalchemy import insert, select
 
 from app.database import async_session_maker
+from app.exceptions import NotFoundException
 
 
 class BaseService:
@@ -33,3 +34,15 @@ class BaseService:
             query = insert(cls.model).values(**data)
             await session.execute(query)
             await session.commit()
+
+    @classmethod
+    async def delete(cls, **data):
+        async with async_session_maker() as session:
+            query = select(cls.model).filter_by(**data)
+            result = await session.execute(query)
+            result = result.scalar()
+            if not result:
+                raise NotFoundException
+            await session.delete(result)
+            await session.commit()
+            return {'detail': 'Удаление прошло успешно.'}
