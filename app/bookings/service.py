@@ -1,11 +1,11 @@
 from datetime import date
 
-from sqlalchemy import and_, func, insert, or_, select
+from sqlalchemy import CTE, and_, func, insert, or_, select
 
 from app.database import async_session_maker
 from app.bookings.models import Bookings
 from app.exceptions import NegativeTimeDeltaException
-from app.hotels.models import Rooms
+from app.hotels.rooms.models import Rooms
 from app.service.base import BaseService
 
 
@@ -25,7 +25,7 @@ class BookingService(BaseService):
                 raise NegativeTimeDeltaException
             booked_rooms = select(Bookings).where(
                 and_(
-                    Bookings.room_id == 1,
+                    Bookings.room_id == room_id,
                     or_(
                         and_(
                             Bookings.date_from >= date_from,
@@ -46,7 +46,6 @@ class BookingService(BaseService):
                 Rooms.quantity, booked_rooms.c.room_id
             )
             rooms_left = await session.execute(get_rooms_left)
-            print(rooms_left)
             rooms_left: int = rooms_left.scalar()
             if rooms_left > 0:
                 get_price = select(Rooms.price).filter_by(id=room_id)
@@ -63,3 +62,26 @@ class BookingService(BaseService):
                 new_booking = await session.execute(add_booking)
                 await session.commit()
                 return new_booking.scalar()
+
+
+def get_all_booked_rooms_cte(date_from, date_to) -> CTE:
+    booked_rooms = (
+        select(Bookings.room_id, func.count(Bookings.room_id)
+               .label('booked_rooms_total'))
+        .select_from(Bookings)
+        .where(
+            or_(
+                and_(
+                    Bookings.date_from >= date_from,
+                    Bookings.date_from <= date_to,
+                ),
+                and_(
+                    Bookings.date_from <= date_from,
+                    Bookings.date_to > date_from,
+                ),
+            ),
+        )
+        .group_by(Bookings.room_id)
+        .cte('booked_rooms')
+    )
+    return booked_rooms

@@ -2,7 +2,9 @@ from datetime import date
 from pydantic import BaseModel
 
 
-class SBooking(BaseModel):
+class Booking(BaseModel):
+    """Модель отображения бронирования."""
+
     id: int
     room_id: int
     user_id: int
@@ -14,3 +16,12 @@ class SBooking(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class BookingDetailed(Booking):
+    """Модель отображения бронирования с подробностями о номере."""
+
+    image_id: int
+    name: str
+    description: str
+    services: list[str]
