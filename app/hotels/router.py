@@ -31,7 +31,7 @@ async def get_available_hotels(
     return hotels
 
 
-@router.get("/id/{hotel_id}")
+@router.get('/id/{hotel_id}')
 async def get_hotel_by_id(
     hotel_id: int,
 ) -> Hotel | None:

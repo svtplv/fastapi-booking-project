@@ -30,14 +30,14 @@ class HotelService(BaseService):
             select(
                 Rooms.hotel_id, func.sum(Rooms.quantity - func.coalesce(
                     booked_rooms.c.booked_rooms_total, 0
-                )).label("rooms_left")
+                )).label('rooms_left')
             )
             .select_from(Rooms)
             .join(
                 booked_rooms, booked_rooms.c.room_id == Rooms.id, isouter=True
             )
             .group_by(Rooms.hotel_id)
-            .cte("booked_hotels")
+            .cte('booked_hotels')
         )
         available_hotels = (
             select(Hotels.__table__.columns, booked_hotels.c.rooms_left)
