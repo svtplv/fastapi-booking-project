@@ -1,6 +1,7 @@
 from datetime import date
 
 from fastapi import APIRouter
+from fastapi_cache.decorator import cache
 
 from app.exceptions import HotelsNotAvailableException
 from app.hotels.service import HotelService
@@ -14,6 +15,7 @@ router = APIRouter(
 
 
 @router.get('/{location}')
+@cache(expire=20)
 async def get_available_hotels(
     location: str,
     date_from: date,
@@ -35,4 +37,6 @@ async def get_available_hotels(
 async def get_hotel_by_id(
     hotel_id: int,
 ) -> Hotel | None:
+    """Возвращает отель по id."""
+
     return await HotelService.get_one_or_none(id=hotel_id)
