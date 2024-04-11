@@ -6,7 +6,7 @@ from app.tasks.celery import celery
 
 
 @celery.task
-def proccess_pic(
+def process_pic(
     path: str,
 ):
     image_path = Path(path)
