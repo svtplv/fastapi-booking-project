@@ -3,8 +3,8 @@ from jose import ExpiredSignatureError, JWTError, jwt
 
 from app.config import settings
 from app.exceptions import (IncorrectTokenFormatException,
-                                  TokenAbsentException, TokenExpiredException,
-                                  TokenInvalidDataException)
+                            TokenAbsentException, TokenExpiredException,
+                            TokenInvalidDataException)
 from app.users.service import UsersService
 
 
@@ -27,8 +27,7 @@ async def get_current_user(token: str = Depends(get_token)):
     user_id: str = payload.get('sub')
     if not user_id:
         raise TokenInvalidDataException
-    print(user_id)
-    user = await UsersService.get_by_id(int(user_id))
+    user = await UsersService.get_one_or_none(id=int(user_id))
     if not user:
         raise TokenInvalidDataException
     return user
