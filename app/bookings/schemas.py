@@ -1,5 +1,5 @@
 from datetime import date
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class Booking(BaseModel):
@@ -14,8 +14,7 @@ class Booking(BaseModel):
     total_cost: int
     totay_days: int
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class BookingDetailed(Booking):
