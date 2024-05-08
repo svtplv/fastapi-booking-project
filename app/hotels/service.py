@@ -4,7 +4,7 @@ from sqlalchemy import and_, func, select
 
 from app.bookings.service import get_all_booked_rooms_cte
 from app.database import async_session_maker
-from app.exceptions import NegativeTimeDeltaException
+from app.exceptions import NegativeArivalException, NegativeTimeDeltaException
 from app.hotels.models import Hotels
 from app.hotels.rooms.models import Rooms
 from app.service.base import BaseService
@@ -22,6 +22,8 @@ class HotelService(BaseService):
     ):
         if date_from > date_to:
             raise NegativeTimeDeltaException
+        if date_from < date.today():
+            raise NegativeArivalException
         booked_rooms = get_all_booked_rooms_cte(
             date_from=date_from,
             date_to=date_to

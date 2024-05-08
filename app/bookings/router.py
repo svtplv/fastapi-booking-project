@@ -1,11 +1,12 @@
+import os
 from datetime import date
+
 from fastapi import APIRouter, Depends
 
 from app.bookings.schemas import Booking
 from app.bookings.service import BookingService
 from app.tasks.tasks import send_booking_confirmation_email
 from app.users.dependencies import get_current_user
-from app.exceptions import RoomNotAvailableException
 from app.users.models import Users
 
 
@@ -34,11 +35,10 @@ async def add_booking(
 ):
     booking = await BookingService.add(user.id, room_id, date_from, date_to)
     booking_dict = Booking.model_validate(booking).model_dump()
-    send_booking_confirmation_email.delay(
-        booking_dict, user.email
-    )
-    if not booking_dict:
-        raise RoomNotAvailableException
+    if os.environ['MODE'] != 'TEST':
+        send_booking_confirmation_email.delay(
+            booking_dict, user.email
+        )
     return booking_dict
 
 

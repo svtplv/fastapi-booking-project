@@ -54,6 +54,16 @@ class NegativeTimeDeltaException(MyBookingException):
     detail = 'Дата въезда не может быть позже даты выезда.'
 
 
+class NegativeArivalException(MyBookingException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    detail = 'Дата въезда не может быть меньше текущей даты.'
+
+
+class StayLimitException(MyBookingException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    detail = 'Время бронирования не может быть больше 30 дней'
+
+
 class HotelsNotAvailableException(MyBookingException):
     status_code = status.HTTP_400_BAD_REQUEST
     detail = 'Нет достуных отелей по данному запросу.'
