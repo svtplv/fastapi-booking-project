@@ -12,7 +12,7 @@ class Booking(BaseModel):
     date_to: date
     price: int
     total_cost: int
-    totay_days: int
+    total_days: int
 
     model_config = ConfigDict(from_attributes=True)
 

@@ -1,7 +1,8 @@
+from typing import Any
 from sqlalchemy import NullPool
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import DeclarativeBase, sessionmaker
-
+from sqlalchemy.types import JSON
 from app.config import settings
 
 
@@ -22,4 +23,6 @@ async_session_maker = sessionmaker(
 
 
 class Base(DeclarativeBase):
-    pass
+    type_annotation_map = {
+        dict[str, Any]: JSON
+    }

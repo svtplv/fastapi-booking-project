@@ -8,7 +8,7 @@ from app.users.models import Users
 
 class UsersAdmin(ModelView, model=Users):
     column_list = [Users.id, Users.email]
-    column_list += [Users.booking]
+    column_list += [Users.bookings]
     column_details_exclude_list = [Users.hashed_password]
     can_delete = False
     name = 'Пользователь'
@@ -26,7 +26,7 @@ class HotelsAdmin(ModelView, model=Hotels):
 
 class RoomsAdmin(ModelView, model=Rooms):
     column_list = [c.name for c in Rooms.__table__.c]
-    column_list += [Rooms.hotel, Rooms.booking]
+    column_list += [Rooms.hotel, Rooms.bookings]
     name = 'Номер'
     name_plural = 'Номера'
     icon = 'fa-solid fa-bed'
