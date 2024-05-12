@@ -24,7 +24,10 @@ async def get_bookings(
 
 
 @router.get('/{id}')
-async def get_booking(id: int, user: Users = Depends(get_current_user)):
+async def get_booking(
+    id: int,
+    user: Users = Depends(get_current_user)
+) -> Booking:
     return await BookingService.get_one_or_none(id=id, user_id=user.id)
 
 
@@ -32,7 +35,7 @@ async def get_booking(id: int, user: Users = Depends(get_current_user)):
 async def add_booking(
     room_id: int, date_from: date, date_to: date,
     user: Users = Depends(get_current_user),
-):
+) -> Booking:
     booking = await BookingService.add(user.id, room_id, date_from, date_to)
     booking_dict = Booking.model_validate(booking).model_dump()
     if os.environ['MODE'] != 'TEST':
